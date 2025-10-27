@@ -17,10 +17,26 @@ const port = process.env.PORT || 8787;
 
 const GroqClientCtor =
   typeof GroqSDK === 'function' ? GroqSDK : GroqSDK.Groq || GroqSDK.default;
-const groqClient =
-  process.env.GROQ_API_KEY && GroqClientCtor
-    ? new GroqClientCtor({ apiKey: process.env.GROQ_API_KEY })
-    : null;
+let groqClientInstance = null;
+
+function getGroqClient() {
+  if (!process.env.GROQ_API_KEY) {
+    return null;
+  }
+
+  if (!GroqClientCtor) {
+    console.warn('Groq SDK unavailable; skipping AI highlights.');
+    return null;
+  }
+
+  if (!groqClientInstance) {
+    groqClientInstance = new GroqClientCtor({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+
+  return groqClientInstance;
+}
 
 // GET /api/movies/search/:title - Search movie details + legal streaming metadata
 app.get('/api/movies/search/:title', async (req, res) => {
@@ -146,6 +162,7 @@ async function getFreeSources(tmdbId) {
  * Produce a short set of AI highlights in the user's regional language using Groq.
  */
 async function getAiHighlights(movieData) {
+  const groqClient = getGroqClient();
   if (!groqClient) {
     console.warn('GROQ client unavailable; skipping AI highlights.');
     return [];
@@ -219,8 +236,10 @@ async function safeJson(response) {
   }
 }
 
-app.listen(port, () => {
-  console.log(`Movie API server listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Movie API server listening on port ${port}`);
+  });
+}
 
 module.exports = app;
