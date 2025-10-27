@@ -1,27 +1,26 @@
 {
-  "name": "movie-search-api",
+  "name": "piratejoke",
   "version": "1.0.0",
-  "description": "Express API for searching movies with legal streaming and torrent sources",
-  "main": "server.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "movies",
-    "tmdb",
-    "watchmode",
-    "streaming",
-    "torrent"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nidzp/piratejoke.git"
+  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nidzp/piratejoke/issues"
+  },
+  "homepage": "https://github.com/nidzp/piratejoke#readme",
   "dependencies": {
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1",
-    "axios": "^1.6.2",
-    "cors": "^2.8.5",
-    "torrent-search-api": "^2.1.4"
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "groq-sdk": "^0.34.0",
+    "node-fetch": "^3.3.2"
   }
 }
