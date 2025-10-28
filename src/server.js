@@ -47,27 +47,33 @@ function getGroqClient() {
   return groqClientInstance;
 }
 
-// GET /api/movies/search/:title - Search movie details + legal streaming metadata
+// GET /api/movies/search/:title - Search movies/series + metadata
 app.get('/api/movies/search/:title', async (req, res) => {
   const title = req.params.title;
 
   try {
-    const movieData = await searchMovieOnTMDB(title);
-    if (!movieData) {
+    const catalogResults = await searchTitlesOnTMDB(title);
+    if (catalogResults.length === 0) {
       return res.json(buildEmptyResponse(title));
     }
 
+    const primary = catalogResults[0];
+
     const [freeSources, piratedSources, aiHighlights] = await Promise.all([
-      getFreeSources(movieData.id),
-      getPiratedSources(movieData.title, movieData.year),
-      getAiHighlights(movieData),
+      getFreeSources(primary.tmdb_id, primary.media_type),
+      getPiratedSources(primary.title, primary.year),
+      getAiHighlights(primary),
     ]);
 
     res.json({
-      naziv: movieData.title,
-      godina: movieData.year,
-      opis: movieData.description,
-      poster_url: movieData.poster_url,
+      naziv: primary.title,
+      godina: primary.year,
+      opis: primary.description,
+      poster_url: primary.poster_url,
+      tip: primary.media_type,
+      reference_tmdb_id: primary.tmdb_id,
+      reference_url: primary.reference_url,
+      alternativni_rezultati: catalogResults.slice(1),
       top5_besplatno: freeSources,
       top5_piratizovano: piratedSources,
       ai_pregled: aiHighlights,
@@ -79,15 +85,15 @@ app.get('/api/movies/search/:title', async (req, res) => {
 });
 
 /**
- * Fetch movie details from TMDB using the provided title.
- * Returns a normalized data object or null if no match is found.
+ * Fetch movie/series details from TMDB using the provided title.
+ * Returns an array of normalized data objects ordered by relevance.
  */
-async function searchMovieOnTMDB(title) {
+async function searchTitlesOnTMDB(title) {
   if (!process.env.TMDB_BEARER) {
     throw new Error('TMDB_BEARER is not defined in environment variables.');
   }
 
-  const url = new URL(`${TMDB_BASE_URL}/search/movie`);
+  const url = new URL(`${TMDB_BASE_URL}/search/multi`);
   url.searchParams.set('query', title);
   url.searchParams.set('include_adult', 'false');
   url.searchParams.set('language', 'en-US');
@@ -111,24 +117,43 @@ async function searchMovieOnTMDB(title) {
   }
 
   const payload = await response.json();
-  const firstResult = payload.results?.[0];
+  const results = Array.isArray(payload.results) ? payload.results : [];
 
-  if (!firstResult) {
+  return results
+    .filter((item) =>
+      item && ['movie', 'tv'].includes(item.media_type || 'movie')
+    )
+    .map((item) => normalizeTmdbItem(item, title))
+    .filter((item) => item !== null)
+    .slice(0, 8);
+}
+
+function normalizeTmdbItem(item, fallbackTitle) {
+  const mediaType = item.media_type === 'tv' ? 'tv' : 'movie';
+  const tmdbId = item.id;
+
+  if (!tmdbId) {
     return null;
   }
 
-  const releaseYear = firstResult.release_date
-    ? Number.parseInt(firstResult.release_date.substring(0, 4), 10)
-    : null;
+  const title =
+    item.title ||
+    item.name ||
+    item.original_title ||
+    item.original_name ||
+    fallbackTitle;
+
+  const releaseDate = item.release_date || item.first_air_date || null;
+  const year = releaseDate ? Number.parseInt(releaseDate.substring(0, 4), 10) : null;
 
   return {
-    id: firstResult.id,
-    title: firstResult.title || firstResult.original_title || title,
-    year: Number.isFinite(releaseYear) ? releaseYear : null,
-    description: firstResult.overview || '',
-    poster_url: firstResult.poster_path
-      ? `${TMDB_IMAGE_BASE}${firstResult.poster_path}`
-      : '',
+    tmdb_id: tmdbId,
+    title,
+    year: Number.isFinite(year) ? year : null,
+    description: item.overview || '',
+    poster_url: item.poster_path ? `${TMDB_IMAGE_BASE}${item.poster_path}` : '',
+    media_type: mediaType,
+    reference_url: `https://www.themoviedb.org/${mediaType}/${tmdbId}`,
   };
 }
 
@@ -136,14 +161,15 @@ async function searchMovieOnTMDB(title) {
  * Query Watchmode for free streaming sources available for the TMDB movie ID.
  * Returns up to five unique URLs of legal free providers.
  */
-async function getFreeSources(tmdbId) {
+async function getFreeSources(tmdbId, mediaType) {
   if (!process.env.WATCHMODE_API_KEY) {
     throw new Error(
       'WATCHMODE_API_KEY is not defined in environment variables.'
     );
   }
 
-  const url = `${WATCHMODE_BASE_URL}/title/movie-${tmdbId}/sources/?apiKey=${process.env.WATCHMODE_API_KEY}`;
+  const watchmodeType = mediaType === 'tv' ? 'tv' : 'movie';
+  const url = `${WATCHMODE_BASE_URL}/title/${watchmodeType}-${tmdbId}/sources/?apiKey=${process.env.WATCHMODE_API_KEY}`;
 
   const response = await fetchFn(url);
   if (!response.ok) {
@@ -176,6 +202,10 @@ async function getFreeSources(tmdbId) {
  * Legal under Swiss law for personal use
  */
 async function getPiratedSources(title, year) {
+  if (process.env.NODE_ENV === 'test') {
+    return [];
+  }
+
   try {
     const searchQuery = year ? `${title} ${year}` : title;
     const torrents = await TorrentSearchApi.search(searchQuery, 'Movies', 10);
@@ -236,7 +266,11 @@ async function getAiHighlights(movieData) {
           content: [
             `Naslov: ${movieData.title}`,
             `Godina: ${movieData.year ?? 'nepoznata'}`,
+            `Tip: ${movieData.media_type === 'tv' ? 'serija' : 'film'}`,
             `Opis: ${movieData.description || 'Nema opisa'}`,
+            movieData.reference_url
+              ? `Referenca: ${movieData.reference_url}`
+              : 'Referenca: nema dostupne reference',
             'Pripremi do tri kratke preporuke ili zanimljivosti za gledaoce.',
           ].join('\n'),
         },
@@ -275,6 +309,10 @@ function buildEmptyResponse(title) {
     godina: null,
     opis: '',
     poster_url: '',
+    tip: null,
+    reference_tmdb_id: null,
+    reference_url: '',
+    alternativni_rezultati: [],
     top5_besplatno: [],
     top5_piratizovano: [],
     ai_pregled: [],

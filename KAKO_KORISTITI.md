@@ -40,6 +40,9 @@ npm run dev
 - 3 zanimljivosti o filmu
 - Generisano AI-jem na srpskom jeziku
 - Ljubičasta sekcija sa ✨ ikonama
+### TMDB Referencirani Rezultati
+- Lista filmova i serija koji odgovaraju unosu
+- Svaki rezultat sadrzi TMDB link za brzi pregled
 
 ### ✅ Besplatni Streaming (Watchmode)
 - Top 5 legalnih izvora

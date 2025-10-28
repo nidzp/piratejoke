@@ -17,6 +17,7 @@ Express.js backend + React frontend aplikacija za pretragu filmova sa AI pregled
 - ✅ **Tamna narandžasto-crna tema** (Cyberpunk stil)
 - ✅ **Neon glow efekti** na tekstovima i linkovima
 - ✅ **Rucno pokretanje pretrage** dugmetom "Pretra�i"
+- **TMDB reference rezultati** (filmovi i serije) sa TMDB linkovima
 - ✅ **Framer Motion** - Smooth animacije (fade-in, slide-up, hover scale)
 - ✅ **AI Highlights sekcija** - Prikazuje Groq AI pregled
 - ✅ **Responsive dizajn** - Mobile-first pristup
@@ -77,8 +78,20 @@ GET http://localhost:8787/api/movies/search/Inception
 {
   "naziv": "Inception",
   "godina": 2010,
+  "tip": "movie",
+  "reference_tmdb_id": 27205,
+  "reference_url": "https://www.themoviedb.org/movie/27205",
   "opis": "Cobb, a skilled thief who commits corporate espionage...",
   "poster_url": "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+  "alternativni_rezultati": [
+    {
+      "tmdb_id": 11324,
+      "media_type": "movie",
+      "title": "Incendies",
+      "year": 2010,
+      "reference_url": "https://www.themoviedb.org/movie/11324"
+    }
+  ],
   "top5_besplatno": [
     "https://tubitv.com/movies/12345",
     "https://pluto.tv/movies/inception"
@@ -96,7 +109,7 @@ GET http://localhost:8787/api/movies/search/Inception
   "ai_pregled": [
     "Inception je vizuelno spektakularan SF triler Christophera Nolana",
     "Leonardo DiCaprio igra lopova koji krade tajne kroz snove",
-    "Film je dobio 4 Oscara za vizuelne i zvučne efekte"
+    "Film je dobio 4 Oscara za vizuelne i zvucne efekte"
   ]
 }
 ```

@@ -17,6 +17,7 @@ function restoreEnv() {
 
 function loadAppWithEnv(overrides = {}) {
   jest.resetModules();
+  process.env.NODE_ENV = 'test';
   process.env.TMDB_BEARER = overrides.TMDB_BEARER || 'tmdb-test-token';
   process.env.WATCHMODE_API_KEY =
     overrides.WATCHMODE_API_KEY || 'watchmode-test-key';
@@ -57,16 +58,25 @@ describe('GET /api/movies/search/:title', () => {
     const app = loadAppWithEnv();
 
     nock('https://api.themoviedb.org')
-      .get('/3/search/movie')
+      .get('/3/search/multi')
       .query(true)
       .reply(200, {
         results: [
           {
             id: 603,
+            media_type: 'movie',
             title: 'The Matrix',
             release_date: '1999-03-31',
             overview: 'A hacker discovers the nature of his reality.',
             poster_path: '/matrix.jpg',
+          },
+          {
+            id: 1396,
+            media_type: 'tv',
+            name: 'Incredible Stories',
+            first_air_date: '2018-10-01',
+            overview: 'Anthology of incredible tales.',
+            poster_path: '/tvposter.jpg',
           },
         ],
       });
@@ -101,6 +111,9 @@ describe('GET /api/movies/search/:title', () => {
     expect(response.body).toMatchObject({
       naziv: 'The Matrix',
       godina: 1999,
+      tip: 'movie',
+      reference_tmdb_id: 603,
+      reference_url: 'https://www.themoviedb.org/movie/603',
       opis: 'A hacker discovers the nature of his reality.',
       poster_url: 'https://image.tmdb.org/t/p/w500/matrix.jpg',
       top5_besplatno: [
@@ -108,6 +121,15 @@ describe('GET /api/movies/search/:title', () => {
         'https://example.com/free-2',
       ],
     });
+    expect(response.body.alternativni_rezultati).toEqual([
+      expect.objectContaining({
+        tmdb_id: 1396,
+        media_type: 'tv',
+        title: 'Incredible Stories',
+        year: 2018,
+        reference_url: 'https://www.themoviedb.org/tv/1396',
+      }),
+    ]);
     expect(response.body.ai_pregled).toEqual([
       'Prva preporuka',
       'Druga preporuka',
@@ -119,7 +141,7 @@ describe('GET /api/movies/search/:title', () => {
     const app = loadAppWithEnv({ GROQ_API_KEY: '' });
 
     nock('https://api.themoviedb.org')
-      .get('/3/search/movie')
+      .get('/3/search/multi')
       .query(true)
       .reply(200, { results: [] });
 
@@ -131,7 +153,12 @@ describe('GET /api/movies/search/:title', () => {
       godina: null,
       opis: '',
       poster_url: '',
+      tip: null,
+      reference_tmdb_id: null,
+      reference_url: '',
+      alternativni_rezultati: [],
       top5_besplatno: [],
+      top5_piratizovano: [],
       ai_pregled: [],
     });
   });

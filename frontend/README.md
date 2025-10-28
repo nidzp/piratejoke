@@ -14,6 +14,7 @@ React frontend aplikacija sa tamnom narandžasto-crnom temom za pretragu filmova
 
 - ✅ **Tamna tema** sa neon-narandžastim akcentima
 - ✅ **Rucno pokretanje pretrage** dugmetom "Pretra�i"
+- **TMDB reference rezultati** (filmovi i serije) sa TMDB linkovima
 - ✅ **Lazy loading** za slike
 - ✅ **Framer Motion** animacije
 - ✅ **Responsive** dizajn
