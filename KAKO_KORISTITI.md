@@ -23,7 +23,7 @@ npm run dev
 
 1. **Otvori browser**: http://localhost:5173
 2. **Upiši naziv filma**: npr. "Inception", "Matrix", "Interstellar"
-3. **Čekaj 500ms**: Automatska pretraga posle pauze
+3. **Klikni dugme "Pretra�i"**: Pokreni pretragu kada si spreman
 4. **Vidi rezultate**!
 
 ---
@@ -57,7 +57,7 @@ npm run dev
 ## 💡 Saveti
 
 ### ⚡ Performanse
-- **Debouncing**: Pretraga se pokreće tek nakon 500ms pauze u kucanju
+- **Rucno pokretanje**: Pretraga se �alje tek kada klikne� "Pretra�i"
 - **Lazy loading**: Slike se učitavaju postepeno
 - **Animacije**: Smooth entrance/exit efekti
 
@@ -103,7 +103,7 @@ npm run dev
 
 ```
 1. User upisuje "Inception" ✍️
-   └─> Debounce wait (500ms) ⏱️
+   ??> Klik na dugme "Pretra�i" ??
 
 2. Frontend šalje zahtev ka backendu 📡
    └─> GET /api/movies/search/Inception
@@ -215,4 +215,5 @@ Automatski prosleđuje `/api/*` zahteve ka `http://localhost:8787`
 - TMDB API
 - Watchmode API
 
-**Legal under Swiss law** 🇨🇭
+
+**Legal under Swiss law**

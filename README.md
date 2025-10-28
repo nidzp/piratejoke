@@ -16,7 +16,7 @@ Express.js backend + React frontend aplikacija za pretragu filmova sa AI pregled
 ### Frontend (React + Vite)
 - ✅ **Tamna narandžasto-crna tema** (Cyberpunk stil)
 - ✅ **Neon glow efekti** na tekstovima i linkovima
-- ✅ **Debouncing pretrage** (500ms delay)
+- ✅ **Rucno pokretanje pretrage** dugmetom "Pretra�i"
 - ✅ **Framer Motion** - Smooth animacije (fade-in, slide-up, hover scale)
 - ✅ **AI Highlights sekcija** - Prikazuje Groq AI pregled
 - ✅ **Responsive dizajn** - Mobile-first pristup
@@ -234,7 +234,7 @@ curl http://localhost:8787/api/movies/search/Inception
 ### Frontend
 1. Otvori http://localhost:5173
 2. Upiši "Inception" ili "Matrix"
-3. Čekaj 500ms (debounce)
+3. Klikni dugme "Pretra�i"
 4. Vidi rezultate!
 
 ---

@@ -69,7 +69,7 @@ function App() {
           Pronađi filmove i gledaj besplatno ili preuzmi torrent linkove
         </p>
 
-        {/* SearchBar sa debouncing-om */}
+        {/* SearchBar sa manualnom pretragom */}
         <SearchBar onSearch={handleSearch} loading={loading} />
       </motion.div>
 

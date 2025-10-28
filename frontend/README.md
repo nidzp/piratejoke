@@ -13,7 +13,7 @@ React frontend aplikacija sa tamnom narandžasto-crnom temom za pretragu filmova
 ## 🎨 Features
 
 - ✅ **Tamna tema** sa neon-narandžastim akcentima
-- ✅ **Debouncing** pretrage (500ms)
+- ✅ **Rucno pokretanje pretrage** dugmetom "Pretra�i"
 - ✅ **Lazy loading** za slike
 - ✅ **Framer Motion** animacije
 - ✅ **Responsive** dizajn
@@ -76,7 +76,7 @@ frontend/
 
 ## 📝 Napomene
 
-- Automatska pretraga posle 500ms pauze u kucanju
+- Rucno pokretanje pretrage klikom na dugme "Pretra�i"
 - Prikazuje do 5 besplatnih i 5 torrent linkova
 - Legal notice za torrent upotrebu (Swiss law)
 
