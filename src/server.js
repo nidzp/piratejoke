@@ -2,6 +2,8 @@ const express = require('express');
 const GroqSDK = require('groq-sdk');
 const cors = require('cors');
 const TorrentSearchApi = require('torrent-search-api');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -420,6 +422,23 @@ async function safeJson(response) {
   } catch (error) {
     return { error: 'Unable to parse JSON body.' };
   }
+}
+
+// Serve the built frontend when running the combined app (e.g. on Vercel)
+const distDir = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(distDir)) {
+  app.use(express.static(distDir));
+
+  const indexFile = path.join(distDir, 'index.html');
+  if (!fs.existsSync(indexFile)) {
+    console.warn('Frontend build missing index.html; only API routes will be served.');
+  } else {
+    app.get(/^(?!\/api\/).*/, (_req, res) => {
+      res.sendFile(indexFile);
+    });
+  }
+} else {
+  console.warn('Frontend build directory not found; only API routes will be served.');
 }
 
 if (require.main === module) {
