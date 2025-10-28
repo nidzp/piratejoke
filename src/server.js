@@ -84,6 +84,92 @@ app.get('/api/movies/search/:title', async (req, res) => {
   }
 });
 
+// GET /api/trending/top3?period=day|week&lang=sr-RS
+app.get('/api/trending/top3', async (req, res) => {
+  try {
+    if (!process.env.TMDB_BEARER) {
+      return res.status(400).json({ error: 'TMDB_BEARER nije postavljen' });
+    }
+    const period = (req.query.period === 'week' ? 'week' : 'day');
+    const lang = req.query.lang || 'sr';
+    const headers = {
+      Authorization: `Bearer ${process.env.TMDB_BEARER}`,
+      'Content-Type': 'application/json;charset=utf-8',
+    };
+    const movieUrl = new URL(`${TMDB_BASE_URL}/trending/movie/${period}`);
+    movieUrl.searchParams.set('language', lang);
+    const tvUrl = new URL(`${TMDB_BASE_URL}/trending/tv/${period}`);
+    tvUrl.searchParams.set('language', lang);
+
+    const [mRes, tRes] = await Promise.all([
+      fetchFn(movieUrl.toString(), { headers }),
+      fetchFn(tvUrl.toString(), { headers }),
+    ]);
+
+    if (!mRes.ok || !tRes.ok) {
+      return res.status(502).json({ error: 'TMDB trending neuspeh' });
+    }
+    const movies = (await mRes.json()).results || [];
+    const tv = (await tRes.json()).results || [];
+
+    res.json({
+      filmovi_top3: movies.slice(0, 3).map((x) => ({
+        id: x.id,
+        naslov: x.title || x.name || x.original_title || x.original_name,
+        ocena: x.vote_average,
+      })),
+      serije_top3: tv.slice(0, 3).map((x) => ({
+        id: x.id,
+        naslov: x.name || x.title || x.original_name || x.original_title,
+        ocena: x.vote_average,
+      })),
+      period,
+      jezik: lang,
+      izvor: 'TMDB',
+    });
+  } catch (err) {
+    console.error('Trending error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// GET /api/tv/schedule?country=RS&date=YYYY-MM-DD
+app.get('/api/tv/schedule', async (req, res) => {
+  try {
+    const country = (req.query.country || 'RS').toUpperCase();
+    const date = req.query.date || new Date().toISOString().slice(0, 10);
+    const url = `https://api.tvmaze.com/schedule?country=${encodeURIComponent(country)}&date=${encodeURIComponent(date)}`;
+    const r = await fetchFn(url);
+    if (!r.ok) {
+      const body = await safeJson(r);
+      return res.status(502).json({ error: 'TVmaze neuspeh', details: body });
+    }
+    const items = await r.json();
+    res.json({
+      country,
+      date,
+      izvor: 'TVmaze',
+      stavke: (Array.isArray(items) ? items : []).slice(0, 50).map((e) => ({
+        vreme: e.airtime || e.airdate || null,
+        naziv: e.show?.name || null,
+        kanal: e.show?.network?.name || e.show?.webChannel?.name || null,
+      })),
+    });
+  } catch (err) {
+    console.error('TV schedule error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// GET /api/disclaimer
+app.get('/api/disclaimer', (_req, res) => {
+  res.json({
+    copyright: `© ${new Date().getFullYear()} Autor ili Kompanija. Sva prava zadržana.`,
+    poruka:
+      'Ovaj servis ne hostuje niti linkuje torrent/magnet sadržaj. Metapodaci i slike: TMDB i/ili TVmaze. Ovaj proizvod koristi TMDB API ali nije odobren niti sertifikovan od strane TMDB.',
+  });
+});
+
 /**
  * Fetch movie/series details from TMDB using the provided title.
  * Returns an array of normalized data objects ordered by relevance.

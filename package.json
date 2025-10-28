@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node src/server.js",
+    "trending": "node src/cli.js trending",
+    "schedule": "node src/cli.js schedule",
+    "disclaimer": "node src/cli.js disclaimer",
     "test": "jest --runInBand"
   },
   "repository": {
