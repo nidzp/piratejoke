@@ -1,5 +1,7 @@
 const express = require('express');
 const GroqSDK = require('groq-sdk');
+const cors = require('cors');
+const TorrentSearchApi = require('torrent-search-api');
 require('dotenv').config();
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
@@ -14,6 +16,13 @@ const fetchFn = global.fetch
 
 const app = express();
 const port = process.env.PORT || 8787;
+
+// Enable CORS for frontend
+app.use(cors());
+app.use(express.json());
+
+// Enable torrent search providers
+TorrentSearchApi.enablePublicProviders();
 
 const GroqClientCtor =
   typeof GroqSDK === 'function' ? GroqSDK : GroqSDK.Groq || GroqSDK.default;
@@ -48,8 +57,11 @@ app.get('/api/movies/search/:title', async (req, res) => {
       return res.json(buildEmptyResponse(title));
     }
 
-    const freeSources = await getFreeSources(movieData.id);
-    const aiHighlights = await getAiHighlights(movieData);
+    const [freeSources, piratedSources, aiHighlights] = await Promise.all([
+      getFreeSources(movieData.id),
+      getPiratedSources(movieData.title, movieData.year),
+      getAiHighlights(movieData),
+    ]);
 
     res.json({
       naziv: movieData.title,
@@ -57,6 +69,7 @@ app.get('/api/movies/search/:title', async (req, res) => {
       opis: movieData.description,
       poster_url: movieData.poster_url,
       top5_besplatno: freeSources,
+      top5_piratizovano: piratedSources,
       ai_pregled: aiHighlights,
     });
   } catch (error) {
@@ -159,6 +172,45 @@ async function getFreeSources(tmdbId) {
 }
 
 /**
+ * Get pirated sources (torrent magnet links) for a movie
+ * Legal under Swiss law for personal use
+ */
+async function getPiratedSources(title, year) {
+  try {
+    const searchQuery = year ? `${title} ${year}` : title;
+    const torrents = await TorrentSearchApi.search(searchQuery, 'Movies', 10);
+
+    if (!torrents || torrents.length === 0) {
+      return [];
+    }
+
+    const magnetLinks = [];
+    for (let i = 0; i < Math.min(5, torrents.length); i++) {
+      try {
+        const magnet = await TorrentSearchApi.getMagnet(torrents[i]);
+        if (magnet) {
+          magnetLinks.push({
+            title: torrents[i].title,
+            magnet: magnet,
+            size: torrents[i].size || 'N/A',
+            seeds: torrents[i].seeds || 0,
+            peers: torrents[i].peers || 0,
+            provider: torrents[i].provider,
+          });
+        }
+      } catch (err) {
+        console.warn(`Failed to get magnet for torrent ${i}:`, err.message);
+      }
+    }
+
+    return magnetLinks;
+  } catch (error) {
+    console.warn('Torrent search error:', error.message);
+    return [];
+  }
+}
+
+/**
  * Produce a short set of AI highlights in the user's regional language using Groq.
  */
 async function getAiHighlights(movieData) {
@@ -224,6 +276,7 @@ function buildEmptyResponse(title) {
     opis: '',
     poster_url: '',
     top5_besplatno: [],
+    top5_piratizovano: [],
     ai_pregled: [],
   };
 }

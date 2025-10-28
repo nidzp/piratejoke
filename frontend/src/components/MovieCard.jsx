@@ -8,7 +8,8 @@ function MovieCard({ movie }) {
     opis, 
     poster_url, 
     top5_besplatno = [], 
-    top5_piratizovano = [] 
+    top5_piratizovano = [],
+    ai_pregled = []
   } = movie;
 
   return (
@@ -56,6 +57,29 @@ function MovieCard({ movie }) {
           <p className="text-gray-300 mb-6 leading-relaxed">
             {opis || 'Nema dostupnog opisa za ovaj film.'}
           </p>
+
+          {/* AI Highlights sa Groq */}
+          {ai_pregled && ai_pregled.length > 0 && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-500/30 rounded-lg">
+              <h3 className="font-bold text-xl text-purple-400 mb-3 flex items-center gap-2">
+                <span>🤖</span> AI Pregled (Groq)
+              </h3>
+              <ul className="space-y-2">
+                {ai_pregled.map((highlight, idx) => (
+                  <motion.li
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex items-start gap-2 text-purple-200"
+                  >
+                    <span className="text-purple-400 mt-1">✨</span>
+                    <span>{highlight}</span>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Besplatni linkovi */}
           <div className="mb-6">
