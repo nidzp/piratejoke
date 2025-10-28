@@ -21,8 +21,17 @@ const port = process.env.PORT || 8787;
 app.use(cors());
 app.use(express.json());
 
-// Enable torrent search providers
-TorrentSearchApi.enablePublicProviders();
+// Torrent pretraga je onemogućena u produkciji ili ako je eksplicitno zabranjena
+const DISABLE_TORRENTS = process.env.DISABLE_TORRENTS === 'true' || process.env.NODE_ENV === 'production';
+if (!DISABLE_TORRENTS) {
+  try {
+    TorrentSearchApi.enablePublicProviders();
+  } catch (e) {
+    console.warn('Torrent providers init failed:', e.message);
+  }
+} else {
+  console.log('Torrent features are disabled in this environment.');
+}
 
 const GroqClientCtor =
   typeof GroqSDK === 'function' ? GroqSDK : GroqSDK.Groq || GroqSDK.default;
@@ -288,7 +297,7 @@ async function getFreeSources(tmdbId, mediaType) {
  * Legal under Swiss law for personal use
  */
 async function getPiratedSources(title, year) {
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test' || DISABLE_TORRENTS) {
     return [];
   }
 

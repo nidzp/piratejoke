@@ -1,18 +1,36 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import SearchBar from './components/SearchBar';
 import MovieCard from './components/MovieCard';
 import Loader from './components/Loader';
-import { searchMovies } from './api';
+import { searchMovies, getTrendingTop3, getTvSchedule, getDisclaimer } from './api';
 
 function App() {
   const [query, setQuery] = useState('');
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [trending, setTrending] = useState(null);
+  const [schedule, setSchedule] = useState(null);
+  const [disclaimer, setDisclaimer] = useState(null);
 
-  // Animated preloader pri inicijalnom mount-u
+  // Učitaj trending, raspored i disclaimer pri mount-u
+  useEffect(() => {
+    (async () => {
+      try {
+        const [t, s, d] = await Promise.all([
+          getTrendingTop3({ period: 'day', lang: 'sr' }),
+          getTvSchedule({ country: 'RS' }),
+          getDisclaimer()
+        ]);
+        setTrending(t);
+        setSchedule(s);
+        setDisclaimer(d);
+      } catch (e) {
+        console.warn('Init sections failed:', e.message);
+      }
+    })();
+  }, []);  // Animated preloader pri inicijalnom mount-u
   useEffect(() => {
     const timer = setTimeout(() => {
       setInitialLoading(false);
@@ -36,8 +54,8 @@ function App() {
       const data = await searchMovies(searchText);
       setMovie(data);
     } catch (err) {
-      console.error('Greška pri fetch-u:', err);
-      setError('Greška pri pretrazi. Proverite da li je backend pokrenut.');
+      console.error('GreÅ¡ka pri fetch-u:', err);
+      setError('GreÅ¡ka pri pretrazi. Proverite da li je backend pokrenut.');
       setMovie(null);
     } finally {
       setLoading(false);
@@ -63,10 +81,10 @@ function App() {
         className="max-w-6xl mx-auto"
       >
         <h1 className="text-4xl md:text-6xl font-bold text-center mb-2 glow-text text-neon-orange">
-          🎬 Pretraži Filmove
+          ðŸŽ¬ PretraÅ¾i Filmove
         </h1>
         <p className="text-center text-gray-400 mb-8">
-          Pronađi filmove i gledaj besplatno ili preuzmi torrent linkove
+          PronaÄ‘i filmove i gledaj besplatno ili preuzmi  linkove
         </p>
 
         {/* SearchBar sa manualnom pretragom */}
@@ -84,7 +102,7 @@ function App() {
         </motion.div>
       )}
 
-      {/* Poruka o grešci */}
+      {/* Poruka o greÅ¡ci */}
       {error && !loading && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -92,7 +110,7 @@ function App() {
           className="max-w-2xl mx-auto mt-12"
         >
           <div className="glass-effect rounded-lg p-6 border-2 border-red-500">
-            <p className="text-center text-red-400 text-lg">❌ {error}</p>
+            <p className="text-center text-red-400 text-lg">âŒ {error}</p>
           </div>
         </motion.div>
       )}
@@ -106,7 +124,7 @@ function App() {
         >
           <div className="glass-effect rounded-lg p-6 border-2 border-yellow-500">
             <p className="text-center text-yellow-400 text-lg">
-              🔍 Nema rezultata za "{query}"
+              ðŸ” Nema rezultata za "{query}"
             </p>
           </div>
         </motion.div>
@@ -135,8 +153,8 @@ function App() {
         transition={{ delay: 0.5 }}
         className="text-center mt-16 pb-8 text-gray-500 text-sm"
       >
-        <p>Made with ❤️ using React, Vite & Tailwind CSS</p>
-        <p className="mt-2">Legal under Swiss law 🇨🇭</p>
+        <p>© 2025. Ovaj proizvod koristi TMDB API ali nije odobren niti sertifikovan od strane TMDB.</p>
+        <p className="mt-2"></p>
       </motion.footer>
     </div>
   );

@@ -14,3 +14,22 @@ export async function searchMovies(title) {
     throw new Error(error.response?.data?.message || 'Failed to fetch movie data');
   }
 }
+
+export async function getTrendingTop3(params = {}) {
+  const { period = 'day', lang = 'sr' } = params;
+  const url = `/api/trending/top3?period=${encodeURIComponent(period)}&lang=${encodeURIComponent(lang)}`;
+  const { data } = await axios.get(url);
+  return data;
+}
+
+export async function getTvSchedule(params = {}) {
+  const { country = 'RS', date } = params;
+  const q = new URLSearchParams({ country, ...(date ? { date } : {}) }).toString();
+  const { data } = await axios.get(`/api/tv/schedule?${q}`);
+  return data;
+}
+
+export async function getDisclaimer() {
+  const { data } = await axios.get('/api/disclaimer');
+  return data;
+}
