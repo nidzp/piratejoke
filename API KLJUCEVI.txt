@@ -1,0 +1,143 @@
+https://www.themoviedb.org/: API Read Access Token eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmMxYTI3ZTk3NjZkMTJjMDgzOWRlZWZhYWMzMzNkNCIsIm5iZiI6MTc2MTM1NDcxMS4zNCwic3ViIjoiNjhmYzIzZDdkYjMyMzg3YTczNmE3MmI3Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.sLFMfh_HK4-EQ09D4nAhxhIhznggAfM-ypq8C1_A-2A
+
+API KEY: dbc1a27e9766d12c0839deefaac333d4
+
+WATCHMODE API KEY: mCzqvjsJnOOUijDAzG7qk0b1l0kD6usakkJenvqE
+
+# TMDB API - https://www.themoviedb.org/settings/api
+# Get your Read Access Token (v4)
+TMDB_BEARER=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYmMxYTI3ZTk3NjZkMTJjMDgzOWRlZWZhYWMzMzNkNCIsIm5iZiI6MTc2MTM1NDcxMS4zNCwic3ViIjoiNjhmYzIzZDdkYjMyMzg3YTczNmE3MmI3Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.sLFMfh_HK4-EQ09D4nAhxhIhznggAfM-ypq8C1_A-2A
+
+key= dbc1a27e9766d12c0839deefaac333d4
+
+# Watchmode API - https://api.watchmode.com/requestApiKey
+# Free tier: ~1000 requests
+WATCHMODE_API_KEY=mCzqvjsJnOOUijDAzG7qk0b1l0kD6usakkJenvqE
+
+# Cloudflare Workers AI (optional) - https://dash.cloudflare.com
+# For AI suggestions using Cloudflare's free tier
+CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
+
+# Groq API (optional alternative) - https://console.groq.com
+# Free tier available
+GROQ_API_KEY=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
+
+# Server configuration
+PORT=8787
+It looks like you are trying to access 5 app from outside the UK.
+
+5 app is currently only accessible from within the UK.
+
+Error code: MY5-WEB-1111
+Kruto i bez ulepšavanja: ne — integracija piratskih API-ja (API za streamovanje/redirect ka piratskim filmovima) u aplikaciju je pravno rizična i u većini jurisdikcija (uključujući Srbiju i EU) izlaže vas ozbiljnim civilnim i krivičnim posledicama. Ispod je sažet, praktičan pravni pregled + šta možete i treba da uradite umesto toga — plus gotov tekst za copyright / pravila o uklanjanju sadržaja koji možete odmah ubaciti u aplikaciju.
+
+Sažetak ključnih pravnih tačaka (kratko i jasno)
+
+U Srbiji autorska i srodna prava su uređena Zakonom o autorskom i srodnim pravima — neovlašćeno umnožavanje, distribucija ili javno prikazivanje audio-vizuelnih dela krši zakon i daje pravo nosiocima prava na postupanje protiv vas. 
+Paragraf
+
+Krivični aspekt: povreda autorskih prava može dovesti i do krivične odgovornosti (Krivični zakonik i relevantne odredbe). To znači — ne samo tužbe i odštete, već potencijalno i kazne i/ili zatvor za ozbiljne prekršaje. 
+Paragraf
+
+Ako vaše korisničko okruženje cilja EU građane: osim nacionalnih zakona, tu su EU pravni instrumenti (DSM Directive / Article 17 i Digital Services Act) koji nameću dodatne obaveze platformama i pooštravaju odgovornost za sadržaj korisnika i mehanizme uklanjanja/sprečavanja. Obezbedite proceduru za „notice-and-takedown” i politiku uklanjanja ilegalnog sadržaja. 
+EUR-Lex
++1
+
+Zaključak: direktna tehnička integracija ili automatizovani linkovi ka piratskim izvorima su visokorizični i pravno neodrživi. Ne savetujem to niti ću davati tehničke instrukcije za to.
+
+Šta možete (legalno) uraditi umesto “pirat API integracije”
+
+Licencirani agregatori i legalni API-ji — integrišite sa pružaocima koji imaju prava (npr. lokalni distributeri, službeni streaming servisi ili službeni metapodatak API-ji poput TMDb za metapodatke). Ovo vam daje legalan katalog i može se monetizovati.
+
+Embed / link prema legalnim izvorima — ako postoji službeni embed (npr. YouTube sa autorizovanim sadržajem), koristite službeni API i poštujte uslove (i Content ID gde je primenljivo).
+
+Uspostavite robustan pravni režim: ugovori o licenci, TOS, pravila za korisnički sadržaj, proces za prijavu i uklanjanje (takodje evidencija).
+
+Pravna provera: angažujte advokata za IP/IT prava pre bilo kakve veze sa trećim stranama koje distribuiraju video sadržaj.
+
+(Napomena: ako želite, mogu da vam sastavim listu legalnih API-ja i servis-provajdera koje je vredno kontaktirati — to je bezbedno i preporučljivo.)
+
+Rizici konkretno pri integraciji piratskih API-ja
+
+Direktna odgovornost za distribuciju ili olakšavanje pristupa ilegalnom sadržaju.
+
+Obaveze prema DSA/DSM (ako imate korisnike u EU) — morate imati jasan proces za prijave i brzo delovanje. 
+Digital Strategy EU
++1
+
+Blokade, kazne i/ili zahtev za gašenjem servisa od strane vlasti ili nosioca prava.
+
+Reputacioni i poslovni rizik — platforma preko koje se šire piratski materijali lako može biti ugašena, a partneri/plaćanja blokirana.
+
+Kratak praktičan compliance check-list pre nego što napravite bilo šta što ima veze sa video sadržajem
+
+Da li posedujete ili imate licencu za svaki sadržaj koji prikazujete? (DA/NE)
+
+Postoji li pisani ugovor sa nosiocem prava? (DA/NE)
+
+TOS i Acceptable Use Policy jasno zabranjuju pirateriju? (DA/NE)
+
+Implementiran takedown & repeat-infringer proces? (DA/NE)
+
+Evidencija o zahtevima za uklanjanje i preduzetim merama (logovi) — postoji? (DA/NE)
+
+Pravna revizija / lokalni advokat potvrdio proces? (DA/NE)
+
+Ako imate ijedno "NE" — stop. Ne ide u produkciju dok se ne reši.
+
+Šta smem i hoću da vam pomognem odmah
+
+Sastavim pragmatičan tekst za copyright / DMCA-style obaveštenje i politiku uklanjanja koji možete ubaciti u aplikaciju. (Ispod.)
+
+Napravim pravni roadmap za ulazak u legalno licenciranje sadržaja (ko kontaktirati, koje vrste licenci tražiti).
+
+Predložim lista legalnih API-ja / agregatora za metapodatke i legalne embed-ove.
+
+Neću: davati tehničke upute kako pronaći, integrisati ili prikupiti piratski sadržaj — to bi bilo aktivno pomaganje u nezakonitoj radnji i odbijam to.
+
+Predloženi tekst: Copyright / Policy / Takedown (za ubacivanje u aplikaciju)
+
+Koristite ga kao osnovu — prilagodite kontakt-e (email, pravno lice) i dodajte delove koje zahteva vaša jurisdikcija.
+
+COPYRIGHT & CONTENT POLICY
+
+1. Autorska prava
+Sav video-materijal prikazan ili distribuiran putem ove aplikacije zaštićen je autorskim i srodnim pravima. Sva prava nosioca prava su zadržana. Neovlašćeno kopiranje, distribucija, preuzimanje ili javno prikazivanje materijala može predstavljati krivično delo i povredu prava nosioca.
+
+2. Naša obaveza
+Ova platforma ne hostuje niti ne promoviše nelegalni sadržaj. Ako primetite sadržaj za koji sumnjate da krši autorska prava, molimo prijavite ga putem dolenavedenog kontakta. Mi ćemo postupiti u skladu sa našim pravilima i relevantnim zakonima.
+
+3. Prijava povrede i uklanjanje (Takedown)
+Da biste podneli zahtev za uklanjanje sadržaja koji navodno krši autorska prava, pošaljite e-mail na: **[legal@example.com]** sa sledećim informacijama:
+ - Ime i kontakt podaci podnosioca zahteva;
+ - Jasna identifikacija dela za koje se tvrdi da je povređeno (naslov, URL, datum);
+ - Izjava pod kaznom po zakonu da verujete da korišćenje sadržaja nije odobreno od strane nosioca prava;
+ - Potpis (elektronski ili skeniran) osobe ovlašćene da podnese zahtev.
+Naši tim će uredno razmotriti zahtev i, ukoliko je osnovan, ukloniti ili onemogućiti pristup spornom sadržaju u najkraćem roku.
+
+4. Ponovljeni prekršioci
+Korisnički nalozi koji više puta hostuju ili objavljuju materijal koji krši autorska prava biće suspendovani ili trajno ugašeni.
+
+5. Kontakt
+Pravna pitanja i obaveštenja za autorska prava šaljite na:
+[Pravno ime kompanije]
+Email: legal@example.com
+Adresa: [unesite adresu]
+
+6. Odricanje
+Ova politika ne predstavlja pravni savet. Za specifične pravne savete obratite se kvalifikovanom odvjetniku za autorska prava.
+
+Kratak primer klauzule u Terms of Service (da ublaži odgovornost)
+
+“Korisnik garantuje da poseduje neophodna prava za uploadovani sadržaj. Platforma ne snosi odgovornost za sadržaj koji korisnici postave; platforma će na osnovu obaveštenja ukloniti materijal koji krši prava nosilaca i zadržava pravo da suspenduje naloge.”
+
+Ako želite odmah — pripremiću:
+
+Prilagođen copyright/DMCA tekst sa vašim podacima (unesem email i ime firme) — spremno za copy/paste.
+
+Operativni checklist (tabelu) za dev tim: tačne tačke integracije takedown-a, logovanja i evidencije.
+
+Lista legalnih API-ja/partnera za sadržaj i metapodatke (potrebno mi reći: ciljate li SR ili EU/US tržište?).
+
+Kažite šta želite da uradim odmah — neću vam dati kod/puteve ka piratskim izvorima, ali hoću da vas izvedem na legalan, skalabilan put do sadržaja.
