@@ -1,0 +1,48 @@
+
+You are working on the `piratejoke` project, a full‑stack movie search and streaming aggregator.  The codebase uses Express.js on the backend and React with Vite on the frontend.  It integrates with TMDB, Watchmode, Groq AI and a torrent search API.  The backend exposes routes for title search (`/api/movies/search/:title`), trending, TV schedule and a disclaimer.  The frontend has a neon cyberpunk theme.  A recent bug fix added an `error` state to `frontend/src/App.jsx` and corrected mis‑encoded strings, ensuring error messages render properly and the UI displays Serbian characters correctly.
+
+Your task is to take the updated code as a foundation and continue development, focusing on commercialising and expanding the application.  The latest commit already fixed mis‑encoded strings, introduced a proper `error` state and added new sections on the homepage that display trending movies/series and the TV schedule, along with a dynamic disclaimer.  Use the same coding style (ES6+ syntax, functional React components with hooks, Tailwind CSS and Framer Motion for UI).
+
+**Key objectives:**
+
+1. **User authentication**
+   • Add a lightweight authentication layer using Supabase or Firebase.  Implement `/api/auth/register` and `/api/auth/login` routes in Express.  Store users in a simple database (SQLite or Postgres via the chosen auth provider).  Use JWTs for session management.  Create a React `AuthContext` to provide user info and login/logout functions across the app.
+   • Update the header to show login/register buttons when no user is logged in and the user’s name with a dropdown (profile/logout) when authenticated.
+
+2. **Watchlist feature**
+   • Create a `watchlists` table in the database with columns: id, user_id, tmdb_id, title, media_type, poster_url, added_at.
+   • Implement RESTful routes `/api/watchlist` (GET/POST/DELETE) that require authentication.  GET returns the current user’s watchlist.  POST accepts a TMDB ID and adds it.  DELETE removes an item.
+   • Add a “Add to watchlist” button in `MovieCard`.  When clicked, call the watchlist API and show a toast notification.  If the title is already in the watchlist, change the button to “Remove from watchlist”.
+   • Add a new page `/watchlist` that fetches and displays the user’s saved titles.  Use the existing `MovieCard` component or a simplified list layout.
+
+3. **Price comparison & availability**
+   • Integrate an external API (e.g., JustWatch or Reelgood; if unavailable, create a stub) to fetch streaming availability and rental/purchase prices for a given TMDB ID.
+   • Add a new backend route `/api/movies/pricing/:tmdbId` that returns an array of providers with fields: provider_name, type (stream/subscription/rental/purchase), price, currency, quality, url.  Handle errors gracefully.
+   • On the frontend, extend `MovieCard` with a collapsible “Pricing & Availability” section.  Call the new route when the section is expanded.  Display provider names, price and quality.  Link to the provider’s page.
+
+4. **Advanced search and filters**
+   • Extend the existing `/api/movies/search` route to accept query parameters for `genre`, `year`, `rating`, `actor` and `director`.  Use TMDB’s discover API to handle these filters.  All parameters are optional.
+   • Modify `frontend/src/api.js` so `searchMovies` accepts a second argument (an object containing filters) and builds a query string.
+   • Update the search UI: add dropdowns or multi‑select inputs for genre and year, and text inputs for actor and director.  Pass selected filters to `handleSearch`.  Ensure the UI remains responsive and accessible.
+
+5. **AI recommendations**
+   • Create a backend route `/api/recommendations` that accepts the user’s watchlist or search history (you can start by taking the last searched title) and uses Groq or another LLM to generate up to five recommended titles, each with TMDB ID, title and a short explanation.
+   • Add a new section on the homepage (below the search bar) titled “Preporučeni filmovi/serije”.  When the user is logged in, fetch recommendations and display them using `MovieCard` or a simplified card.  When the user is not logged in, prompt them to create an account to unlock recommendations.
+
+6. **Subscription & token system**
+   • Implement a simple token balance for each user.  Add a `tokens` column to the users table with a default value.  Each call to `/api/recommendations` or `/api/movies/pricing` deducts one token.  Block the request and return an error if the user’s balance is zero.
+   • Create an endpoint `/api/billing/purchase` that integrates with a payment provider (e.g., Stripe test mode) to allow users to purchase additional tokens.  After a successful payment, increment the user’s token balance.
+   • Add a “Token balance” indicator in the header.  Provide a “Buy tokens” button that opens a checkout modal.  For the sake of this MVP, mock the payment and simply add a fixed number of tokens when the button is clicked.
+
+7. **Testing and documentation**
+   • Extend the existing Jest tests in `__tests__/server.test.js` to cover new routes and edge cases: authentication, watchlist CRUD, pricing lookup and recommendation token deduction.
+   • Update any relevant README files with instructions on setting up the auth provider, running migrations, and using the new features.
+
+**General guidelines:**
+
+• Maintain code modularity: create separate files/modules for new API routes and React pages.  Keep functions small and focused.
+• Use environment variables for API keys, database URLs and JWT secrets.  Document them in `.env.example`.
+• Provide graceful error messages both on the server (as JSON) and in the UI via the `error` state.  Make sure to clear the error when appropriate.
+• Keep the cyberpunk visual theme consistent when adding new UI elements.
+
+Deliver the updated source code with clear commit messages for each major feature.  Focus on getting an MVP working; edge cases and refinements can be tackled later.

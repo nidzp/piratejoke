@@ -23,10 +23,14 @@
   },
   "homepage": "https://github.com/nidzp/piratejoke#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.47.5",
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.2.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "groq-sdk": "^0.34.0",
+    "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
     "torrent-search-api": "^2.1.4"
   },
